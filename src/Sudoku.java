@@ -136,9 +136,10 @@ public class Sudoku {
         }
     }
 
-    public void crossSection(char value) {
+    public boolean crossSection(char value) {
         Sudoku crossSectionGrid = new Sudoku();
         boolean changes = true;
+        boolean anythingChanged = false;
 
         while (changes) {
             changes = false;
@@ -168,11 +169,13 @@ public class Sudoku {
                             System.out.println("a location is found for the number "+value+" at the box location: X:"+x+" Y:"+y+" the coords are: X:"+coordsTuple[0]+" Y:"+coordsTuple[1]);
                             grid[coordsTuple[1]][coordsTuple[0]].value = value;
                             changes = true;
+                            anythingChanged = true;
                         }
                     }
                 }
             }
         }
+        return anythingChanged;
     }
 
     public boolean subGridContainsOnlyOne0(Box[][] grid, int subGridX, int subGridY){
@@ -209,5 +212,24 @@ public class Sudoku {
             }
         }
         return null;
+    }
+
+    public void runAllCrosssections(){
+        boolean changed = true;
+
+        while (changed){
+            System.out.println("\nRunning a new crossSection\n");
+            changed = false;
+
+            changed |= crossSection('1');
+            changed |= crossSection('2');
+            changed |= crossSection('3');
+            changed |= crossSection('4');
+            changed |= crossSection('5');
+            changed |= crossSection('6');
+            changed |= crossSection('7');
+            changed |= crossSection('8');
+            changed |= crossSection('9');
+        }
     }
 }
