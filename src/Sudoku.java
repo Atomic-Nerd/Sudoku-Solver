@@ -15,6 +15,7 @@ public class Sudoku {
     }
 
     public void display() {
+        System.out.println("\n---------------------\n");
         for (int y = 0; y < 9; y++) {
             for (int x = 0; x < 9; x++) {
                 if (x == 3 || x == 6) {
@@ -27,6 +28,7 @@ public class Sudoku {
                 System.out.println("---------------------");
             }
         }
+        System.out.println("\n---------------------\n");
     }
 
     public void input() {
@@ -136,11 +138,11 @@ public class Sudoku {
 
     public void crossSection(char value) {
         Sudoku crossSectionGrid = new Sudoku();
-        crossSectionGrid.copyGrid(grid);
-        boolean changes = false;
+        boolean changes = true;
 
-        while (!changes) {
-            changes = true;
+        while (changes) {
+            changes = false;
+            crossSectionGrid.copyGrid(grid);
 
             for (int y = 0; y < 9; y++) {
                 for (int x = 0; x < 9; x++) {
@@ -148,24 +150,64 @@ public class Sudoku {
                         for (int y2 = 0; y2 < 9; y2++) {
                             if (crossSectionGrid.grid[y2][x].value == '0') {
                                 crossSectionGrid.grid[y2][x].value = 'X';
-                                changes = false;
                             }
                         }
                         for (int x2 = 0; x2 < 9; x2++) {
                             if (crossSectionGrid.grid[y][x2].value == '0') {
                                 crossSectionGrid.grid[y][x2].value = 'X';
-                                changes = false;
                             }
                         }
                     }
                 }
             }
+            for (int y = 0; y < 3; y++) {
+                for (int x = 0; x < 3; x++) {
+                    if (subGridContainsOnlyOne0(crossSectionGrid.grid, x, y)) {
+                        if (!subGridContainsX(crossSectionGrid.grid, x, y, value)){
+                            int[] coordsTuple = findEmptyPositionInSubGrid(crossSectionGrid.grid, x, y);
+                            System.out.println("a location is found for the number "+value+" at the box location: X:"+x+" Y:"+y+" the coords are: X:"+coordsTuple[0]+" Y:"+coordsTuple[1]);
+                            grid[coordsTuple[1]][coordsTuple[0]].value = value;
+                            changes = true;
+                        }
+                    }
+                }
+            }
         }
-        crossSectionGrid.display();
     }
 
-    public boolean subGridContainsX(Box[][] grid, int x, int y, char c) {
-
+    public boolean subGridContainsOnlyOne0(Box[][] grid, int subGridX, int subGridY){
+        int count = 0;
+        for (int y = subGridY*3; y < subGridY*3+3; y++) {
+            for (int x = subGridX*3; x < subGridX*3+3; x++) {
+                if(grid[y][x].value=='0'){
+                    count++;
+                }
+            }
+        }
+        if (count==1){
+            return true;
+        } else{
+            return false;
+        }
+    }
+    public boolean subGridContainsX(Box[][] grid, int subGridX, int subGridY, char c) {
+        for (int y = subGridY*3; y < subGridY*3+3; y++) {
+            for (int x = subGridX*3; x < subGridX*3+3; x++) {
+                if(grid[y][x].value==c){
+                    return true;
+                }
+            }
+        }
         return false;
+    }
+    public int[] findEmptyPositionInSubGrid(Box[][] grid, int subGridX, int subGridY) {
+        for (int y = subGridY*3; y < subGridY*3+3; y++) {
+            for (int x = subGridX*3; x < subGridX*3+3; x++) {
+                if(grid[y][x].value=='0'){
+                    return new int[] {x,y};
+                }
+            }
+        }
+        return null;
     }
 }
